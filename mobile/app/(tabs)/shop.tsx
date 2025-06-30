@@ -11,6 +11,7 @@ import {Ionicons} from "@expo/vector-icons";
 import BonusAlreadyActiveModal from "@/components/shop/BonusAlreadyActiveModal";
 import NotEnoughCoinsModal from "@/components/shop/NotEnoughCoinsModal";
 import UnknownErrorModal from "@/components/shop/UnknownErrorModal";
+import PurchaseSuccessfulModal from "@/components/shop/PurchaseSuccessful";
 import {queryClient} from '@/lib/queryClient';
 
 const coinIcon = require('../../assets/images/icons/gamification/coin.png');
@@ -34,7 +35,8 @@ const ShopTab = ({
                      userData,
                      setShowCoinsModal,
                      setShowBonusAlreadyActiveModal,
-                     setShowUnknownErrorModal
+                     setShowUnknownErrorModal,
+                     setShowPurchaseSuccessfulModal
                  }: {
     items: Bonus[];
     colors: any;
@@ -42,6 +44,7 @@ const ShopTab = ({
     setShowCoinsModal: React.Dispatch<React.SetStateAction<boolean>>;
     setShowBonusAlreadyActiveModal: React.Dispatch<React.SetStateAction<boolean>>;
     setShowUnknownErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowPurchaseSuccessfulModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => (
     <View style={styles.tabContainer}>
         {items.map((offer) => (
@@ -58,8 +61,7 @@ const ShopTab = ({
 
                     try {
                         const response = await buyBonus(offer.id, userData.id);
-
-                        Alert.alert("Erfolg", response);
+                        setShowPurchaseSuccessfulModal(true);
                         await queryClient.invalidateQueries({queryKey: ["userData"]});
                     } catch (err: any) {
                         const message = err?.message || "";
@@ -105,6 +107,7 @@ const Shop = () => {
     const [showCoinsModal, setShowCoinsModal] = useState(false);
     const [showBonusAlreadyActiveModal, setShowBonusAlreadyActiveModal] = useState(false);
     const [showUnknownErrorModal, setShowUnknownErrorModal] = useState(false);
+    const [showPurchaseSuccessfulModal, setShowPurchaseSuccessfulModal] = useState(false);
     const [index, setIndex] = useState(0);
     const [routes] = useState([
         {key: 'xp', title: 'XP Boosts'},
@@ -115,15 +118,18 @@ const Shop = () => {
     const renderScene = SceneMap({
         xp: () => <ShopTab items={xpBonuses} colors={colors} userData={userData} setShowCoinsModal={setShowCoinsModal}
                            setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
-                           setShowUnknownErrorModal={setShowUnknownErrorModal}/>,
+                           setShowUnknownErrorModal={setShowUnknownErrorModal}
+                           setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}/>,
         skip: () => <ShopTab items={streakBonuses} colors={colors} userData={userData}
                              setShowCoinsModal={setShowCoinsModal}
                              setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
-                             setShowUnknownErrorModal={setShowUnknownErrorModal}/>,
+                             setShowUnknownErrorModal={setShowUnknownErrorModal}
+                             setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}/>,
         health: () => <ShopTab items={healthBonuses} colors={colors} userData={userData}
                                setShowCoinsModal={setShowCoinsModal}
                                setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
-                               setShowUnknownErrorModal={setShowUnknownErrorModal}/>,
+                               setShowUnknownErrorModal={setShowUnknownErrorModal}
+                               setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}/>,
     });
 
     return (
@@ -156,6 +162,10 @@ const Shop = () => {
             <UnknownErrorModal
                 visible={showUnknownErrorModal}
                 onClose={() => setShowUnknownErrorModal(false)}
+            />
+            <PurchaseSuccessfulModal
+                visible={showPurchaseSuccessfulModal}
+                onClose={() => setShowPurchaseSuccessfulModal(false)}
             />
         </Container>
     );
