@@ -23,11 +23,17 @@ public class AIAgentService {
 
     public int calculateXP(Task task) {
         String prompt = buildPrompt(task, "xp");
+        if (isLikelyNonsense(task.getTitle())) {
+            return 0;
+        }
         return askOpenAI(prompt);
     }
 
     public int calculateCoins(Task task) {
         String prompt = buildPrompt(task, "coins");
+        if (isLikelyNonsense(task.getTitle())) {
+            return 0;
+        }
         return askOpenAI(prompt);
     }
 
@@ -72,16 +78,29 @@ public class AIAgentService {
         return String.format("""
             Du bist ein intelligenter Belohnungsagent in einer Gamification-App.
 
-            Bewerte die folgende Aufgabe im Hinblick auf ihre %s-Belohnung.
-            Nutze dabei eine ganzzahlige Skala von 1 (sehr leicht, geringer Wert) bis 100 (sehr schwer, hoher Wert).
+            Deine Aufgabe ist es, die folgende Benutzer-Aufgabe im Hinblick auf ihre %s-Belohnung zu bewerten.
 
-            Berücksichtige bei deiner Bewertung:
-            - Die geistige oder körperliche Anstrengung der Aufgabe
-            - Die geschätzte Zeitdauer (z. B. Minuten oder Stunden)
-            - Die Anzahl der Wiederholungen
-            - Den möglichen Nutzen für persönliche Entwicklung, Gesundheit oder Produktivität
+            Gib **ausschließlich eine ganze Zahl zwischen 0 und 100** zurück – ohne Begründung, ohne Text.
 
-            Gib **ausschließlich** eine ganze Zahl zwischen 0 und 100 als Antwort zurück.
+            Verwende eine **exponentielle Belohnungsskala**:
+            - Sehr einfache Aufgaben (z. B. „Apfel essen“, „Wasser trinken“) erhalten **5–15 Punkte**
+            - Normale Aufgaben (z. B. „30 Min Workout“, „1h lernen“) erhalten **20–40 Punkte**
+            - Anspruchsvolle Aufgaben (z. B. „2h lernen“, „intensives Krafttraining“) erhalten **50–70 Punkte**
+            - Extrem aufwendige Aufgaben (z. B. „Marathon laufen“, „3h konzentriertes Arbeiten“) erhalten **90–100 Punkte**
+
+            Wichtig:
+            - Die Punkte steigen **nicht linear**, sondern **exponentiell** mit dem Aufwand.
+            - Falls der Titel sinnlos oder bedeutungslos ist (z. B. „asdf“, „123“, „...“), gib **0** Punkte zurück.
+            - Falls du dir **nicht sicher** bist, ob der Titel eine sinnvolle Aufgabe ist, gib **0 Punkte**.
+
+
+            Berücksichtige:
+            - Körperliche oder geistige Anstrengung
+            - Zeitaufwand (z. B. Minuten oder Stunden)
+            - Anzahl der Wiederholungen pro Tag
+            - Beitrag zu persönlicher Entwicklung, Gesundheit oder Produktivität
+
+            Gib **nur** die Zahl zurück – ohne Erklärung.
 
             --- Aufgabe ---
             Titel: %s
@@ -96,5 +115,28 @@ public class AIAgentService {
         );
     }
 
+    private boolean isLikelyNonsense(String title) {
+        if (title == null || title.trim().isEmpty()) return true;
 
+        String cleaned = title.replaceAll("[^a-zA-Z]", "").toLowerCase();
+
+        // Sehr kurze Einträge direkt ablehnen
+        if (cleaned.length() < 4) return true;
+
+        // Nur 1 „Wort“ ist okay, wenn es ein echtes sein könnte
+        if (cleaned.length() >= 8 && countVowels(cleaned) >= 2) return false;
+
+        // Wenn kaum Vokale → vermutlich zufällig
+        double vowelRatio = (double) countVowels(cleaned) / cleaned.length();
+        if (vowelRatio < 0.25) return true;
+
+        return false;
+    }
+
+    private int countVowels(String input) {
+        return (int) input.chars()
+                .filter(c -> "aeiou".indexOf(c) >= 0)
+                .count();
+    }
+    
 }
