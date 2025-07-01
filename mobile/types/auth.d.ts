@@ -20,4 +20,5 @@ export type AuthContextType = {
     login: (email: string, password: string) => Promise<void>;
     register: (data: RegisterRequest) => Promise<void>;
     logout: () => Promise<void>;
+    deleteAccount: () => Promise<void>;
 };

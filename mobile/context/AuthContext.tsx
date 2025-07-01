@@ -91,6 +91,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         router.replace(ROUTES.LOGIN);
     };
 
+    const deleteAccount = async () => {
+        if (!user?.id) {
+            console.warn('Keine Benutzer-ID vorhanden');
+            return;
+        }
+
+        try {
+            await api.delete(`/user/${user.id}`);
+            await logout(); // Re-use der bestehenden Logout-Logik
+        } catch (err: any) {
+            console.error('Kontolöschung fehlgeschlagen:', err.response?.data || err.message);
+            throw err;
+        }
+    };
+
+
     const contextValue = useMemo(() => ({
         user,
         userId: user?.id ?? null,
@@ -98,6 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         login,
         register,
         logout,
+        deleteAccount,
         isLoading
     }), [user, token, isLoading]);
 
