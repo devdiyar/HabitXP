@@ -48,7 +48,6 @@ export default function Card({
                              }: Readonly<CardProps>) {
     const [showModal, setShowModal] = useState(false);
     const [showLevelUpModal, setShowLevelUpModal] = useState(false);
-    const [shouldShowLevelUp, setShouldShowLevelUp] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const {data: userData} = useUserData();
@@ -78,9 +77,8 @@ export default function Card({
             const effectiveXP = userData?.xpBonusActive ? response.rewardXP * userData.xpFactor : response.rewardXP;
             if (response.completed) {
                 if (response.levelup) {
-                    setShouldShowLevelUp(true);
+                    setShowLevelUpModal(true);
                 }
-
                 await queryClient.invalidateQueries({queryKey: ['tasks']});
                 await queryClient.invalidateQueries({queryKey: ['userData']});
                 setRewards([
@@ -158,13 +156,7 @@ export default function Card({
 
                 <RewardModal
                     visible={showModal}
-                    onClose={() => {
-                        setShowModal(false);
-                        if (shouldShowLevelUp) {
-                            setShouldShowLevelUp(false);
-                            setShowLevelUpModal(true);
-                        }
-                    }}
+                    onClose={() => setShowModal(false)}
                     title={"Habit abgeschlossen!"}
                     description={"Du hast Belohnungen erhalten:"}
                     rewards={rewards}

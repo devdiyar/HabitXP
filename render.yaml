@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: habitxp-backend
-    env: docker
-    plan: free
-    repo: https://github.com/devdiyar/HabitXP
-    branch: dev
-    rootDir: backend
-    dockerfilePath: backend/Dockerfile
