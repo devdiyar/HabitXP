@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: habitxp-backend
+    env: docker
+    plan: free
+    repo: https://github.com/Yassine2475/HabitXP
+    branch: main
+    rootDir: backend
+    dockerfilePath: backend/Dockerfile
