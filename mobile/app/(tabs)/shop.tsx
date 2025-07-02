@@ -1,8 +1,7 @@
-import {Alert, Dimensions, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import Container from '@/components/Container';
 import useTheme from '@/hooks/useTheme';
-import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {buyBonus, fetchBonuses} from "@/services/shopService";
 import {useUserData} from "@/hooks/useUserData";
 import {Bonus} from "@/types/bonus";
@@ -91,6 +90,7 @@ const ShopTab = ({
 const Shop = () => {
     const colors = useTheme();
     const layout = Dimensions.get('window');
+
     const {data: userData} = useUserData();
     const queryClient = useQueryClient();
 
@@ -108,49 +108,64 @@ const Shop = () => {
     const [showBonusAlreadyActiveModal, setShowBonusAlreadyActiveModal] = useState(false);
     const [showUnknownErrorModal, setShowUnknownErrorModal] = useState(false);
     const [showPurchaseSuccessfulModal, setShowPurchaseSuccessfulModal] = useState(false);
-    const [index, setIndex] = useState(0);
-    const [routes] = useState([
-        {key: 'xp', title: 'XP Boosts'},
-        {key: 'skip', title: 'Streak Freeze'},
-        {key: 'health', title: 'Health'},
-    ]);
-
-    const renderScene = SceneMap({
-        xp: () => <ShopTab items={xpBonuses} colors={colors} userData={userData} setShowCoinsModal={setShowCoinsModal}
-                           setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
-                           setShowUnknownErrorModal={setShowUnknownErrorModal}
-                           setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}/>,
-        skip: () => <ShopTab items={streakBonuses} colors={colors} userData={userData}
-                             setShowCoinsModal={setShowCoinsModal}
-                             setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
-                             setShowUnknownErrorModal={setShowUnknownErrorModal}
-                             setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}/>,
-        health: () => <ShopTab items={healthBonuses} colors={colors} userData={userData}
-                               setShowCoinsModal={setShowCoinsModal}
-                               setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
-                               setShowUnknownErrorModal={setShowUnknownErrorModal}
-                               setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}/>,
-    });
-
+    const [activeTab, setActiveTab] = useState<'xp' | 'skip' | 'health'>('xp');
     return (
         <Container>
             <Text style={[styles.title, {color: colors.title}]}>Shop <Ionicons name="pricetag-outline" size={22}/>
             </Text>
-            <TabView
-                navigationState={{index, routes}}
-                renderScene={renderScene}
-                onIndexChange={setIndex}
-                initialLayout={{width: layout.width}}
-                renderTabBar={props => (
-                    <TabBar
-                        {...props}
-                        indicatorStyle={{backgroundColor: colors.title}}
-                        style={{backgroundColor: colors.background}}
-                        activeColor={colors.title}
-                        inactiveColor={colors.subtitle}
-                    />
-                )}
-            />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 }}>
+                <Pressable onPress={() => setActiveTab('xp')}>
+                    <Text style={[styles.tabButton, activeTab === 'xp' && styles.activeTabButton]}>
+                        XP Boosts
+                    </Text>
+                </Pressable>
+                <Pressable onPress={() => setActiveTab('skip')}>
+                    <Text style={[styles.tabButton, activeTab === 'skip' && styles.activeTabButton]}>
+                        Streak Freeze
+                    </Text>
+                </Pressable>
+                <Pressable onPress={() => setActiveTab('health')}>
+                    <Text style={[styles.tabButton, activeTab === 'health' && styles.activeTabButton]}>
+                        Health
+                    </Text>
+                </Pressable>
+            </View>
+
+            {activeTab === 'xp' && (
+                <ShopTab
+                    items={xpBonuses}
+                    colors={colors}
+                    userData={userData}
+                    setShowCoinsModal={setShowCoinsModal}
+                    setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
+                    setShowUnknownErrorModal={setShowUnknownErrorModal}
+                    setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}
+                />
+            )}
+
+            {activeTab === 'skip' && (
+                <ShopTab
+                    items={streakBonuses}
+                    colors={colors}
+                    userData={userData}
+                    setShowCoinsModal={setShowCoinsModal}
+                    setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
+                    setShowUnknownErrorModal={setShowUnknownErrorModal}
+                    setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}
+                />
+            )}
+
+            {activeTab === 'health' && (
+                <ShopTab
+                    items={healthBonuses}
+                    colors={colors}
+                    userData={userData}
+                    setShowCoinsModal={setShowCoinsModal}
+                    setShowBonusAlreadyActiveModal={setShowBonusAlreadyActiveModal}
+                    setShowUnknownErrorModal={setShowUnknownErrorModal}
+                    setShowPurchaseSuccessfulModal={setShowPurchaseSuccessfulModal}
+                />
+            )}
             <NotEnoughCoinsModal
                 visible={showCoinsModal}
                 onClose={() => setShowCoinsModal(false)}
@@ -218,5 +233,17 @@ const styles = StyleSheet.create({
         width: 22,
         height: 22,
         marginRight: 8,
+    },
+    tabButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        color: 'gray',
+        fontSize: 16,
+    },
+    activeTabButton: {
+        color: 'white',
+        fontWeight: 'bold',
+        textDecorationLine: 'underline',
     },
 });
