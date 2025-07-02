@@ -28,6 +28,7 @@ export default function RegisterScreen() {
     const colors = useTheme();
 
     const handleRegister = async () => {
+        if (loading) return;
         const newErrors: typeof errors = {};
 
         if (!isNotEmpty(firstName)) newErrors.firstName = "Bitte Vorname eingeben";
