@@ -36,6 +36,9 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "API_URL": "https://habitxp.onrender.com"
     }
   }
 }

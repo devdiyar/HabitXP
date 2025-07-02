@@ -13,7 +13,7 @@ export default function NotEnoughCoinsModal({visible, onClose}: Readonly<NotEnou
         <Modal transparent={true} animationType="fade" visible={visible}>
             <View style={styles.modalBackground}>
                 <View style={[styles.modalContent, {backgroundColor: theme.background}]}>
-                    <Text style={[styles.modalTitle, {color: theme.title}]}>Nicht genügend Coins</Text>
+                    <Text style={[styles.modalTitle, {color: theme.title}]}>Limit erreicht</Text>
                     <Text style={[styles.modalText, {color: theme.subtitle}]}>
                         Du hast nicht genügend Coins um diesen Bonus zu kaufen!
                     </Text>
