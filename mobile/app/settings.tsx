@@ -31,8 +31,8 @@ export default function SettingsScreen() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.subtitle }]}>Konto</Text>
-          <SettingItem icon="person-outline" label="Profil bearbeiten (bald)" />
-          <SettingItem icon="lock-closed-outline" label="Passwort ändern (bald)" />
+          <SettingItem icon="person-outline" label="Profil bearbeiten" />
+          <SettingItem icon="lock-closed-outline" label="Passwort ändern" />
           <SettingItem
             icon="trash-outline"
             label="Konto löschen"

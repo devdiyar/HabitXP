@@ -4,6 +4,12 @@ export default {
     expo: {
         name: "HabitXP",
         slug: "habitxp",
+        icon: "./assets/images/app-logo.png",
+        splash: {
+            image: "./assets/images/app-logo.png",
+            resizeMode: "contain",
+            backgroundColor: "#0C0A12"
+        },
         scheme: "habitxp",
         android: {
             package: "com.Yassine.habitxp"
