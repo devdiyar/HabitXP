@@ -94,6 +94,7 @@ public class SchedulerService {
         for (User user : users) {
             if (user.isStreakBroken()) {
                 user.setStreakBroken(false);
+                userRepository.save(user);
             }
         }
     }
@@ -102,7 +103,9 @@ public class SchedulerService {
     public void checkUsersForStreakFreeze() {
         List<User> users = userRepository.findAll();
         for (User user : users) {
-            user.streakFreezeReset();
+            if(user.streakFreezeReset()){
+                userRepository.save(user);
+            }
         }
     }
 

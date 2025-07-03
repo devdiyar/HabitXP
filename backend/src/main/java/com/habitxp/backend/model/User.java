@@ -105,10 +105,13 @@ public class User {
         }
     }
 
-    public void streakFreezeReset() {
+    public boolean streakFreezeReset() {
         if (StreakFreezeUntil != null && Instant.now().isAfter(getStreakFreezeUntil())) {
             StreakFreezeActive = false;
             StreakFreezeUntil = null;
+            return true;
+        }else{
+            return false;
         }
     }
 
