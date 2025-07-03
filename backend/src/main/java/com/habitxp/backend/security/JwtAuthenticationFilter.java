@@ -26,7 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        System.out.println("JWT Filter called, URI: " + request.getRequestURI());
         String path = request.getRequestURI();
 
         if ("/ping".equals(path)) {

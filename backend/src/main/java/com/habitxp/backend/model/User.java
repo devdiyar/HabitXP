@@ -94,11 +94,14 @@ public class User {
         return xpGoal;
     }
 
-    public void xpFactorReset() {
+    public boolean xpFactorReset() {
         if (xpFactorUntil != null && Instant.now().isAfter(xpFactorUntil)) {
             xpFactor = 1;
             xpFactorUntil = null;
             xpBonusActive = false;
+            return true;
+        }else{
+            return false;
         }
     }
 

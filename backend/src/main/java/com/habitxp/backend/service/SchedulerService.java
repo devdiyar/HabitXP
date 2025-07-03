@@ -110,7 +110,9 @@ public class SchedulerService {
     public void checkUsersForXPFactor() {
         List<User> users = userRepository.findAll();
         for (User user : users) {
-            user.xpFactorReset();
+            if(user.xpFactorReset()){
+                userRepository.save(user);
+            }
         }
     }
 
