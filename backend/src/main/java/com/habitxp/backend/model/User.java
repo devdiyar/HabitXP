@@ -49,12 +49,15 @@ public class User {
 
     private int taskLimit;
 
-    private List<String> bonusIds;
-    private List<String> spaceIds;
-
-
-    private List<String> avatars;
-    private List<String> banner;
+    @Builder.Default
+    private List<String> spaceIds = new ArrayList<>();
+    @Builder.Default
+    private List<String> bonusIds = new ArrayList<>();
+    
+    @Builder.Default
+    private List<String> avatars = new ArrayList<>();
+    @Builder.Default
+    private List<String> banner = new ArrayList<>();
 
     public void addXP(int baseXP) {
         int gainedXP = baseXP * xpFactor;

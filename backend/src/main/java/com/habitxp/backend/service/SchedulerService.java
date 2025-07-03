@@ -27,16 +27,22 @@ public class SchedulerService {
     @Scheduled(cron = "0 0 * * * *") // jede Stunde
     public void checkDeadlineTask() {
         LocalDate today = LocalDate.now();
-        List<Task> allTasks = taskRepository.findAll();
         List<User> users = userRepository.findAll();
 
         for (User user : users) {
 
             boolean hasCompletedAny = false;
 
-            List<Space> spaces = spaceRepository.findAllById(user.getSpaceIds());
+            List<String> spaceIds = user.getSpaceIds();
+            if (spaceIds == null || spaceIds.isEmpty()) continue;
+
+            List<Space> spaces = spaceRepository.findAllById(spaceIds);
+
             for (Space space : spaces) {
-                List<Task> tasks = taskRepository.findAllById(space.getTaskIds());
+                List<String> taskIds = space.getTaskIds();
+                if (taskIds == null || taskIds.isEmpty()) continue;
+
+                List<Task> tasks = taskRepository.findAllById(taskIds);
 
                 for (Task task : tasks) {
                     if (task.getDeadline() != null && task.getDeadline().isBefore(today)) {
@@ -44,7 +50,6 @@ public class SchedulerService {
                         if (task.isCompleted()) {
                             hasCompletedAny = true;
                         } else {
-                            // Reset oder löschen
                             if (task.getFrequency() == Frequency.NONE) {
                                 space.getTaskIds().remove(task.getId());
                                 spaceRepository.save(space);
@@ -62,14 +67,14 @@ public class SchedulerService {
             if (!hasCompletedAny && !user.isStreakFreezeActive()) {
                 user.setStreakBroken(true);
                 user.setStreak(0);
-
                 user.healthpenalty();
                 user.coinPenalty();
             }
         }
 
-    userRepository.saveAll(users);
+        userRepository.saveAll(users);
     }
+
 
 
     @Scheduled(cron = "0 0 0 * * *") // täglich um Mitternacht
