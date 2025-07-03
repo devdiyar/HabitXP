@@ -7,6 +7,7 @@ import {useTasks} from "@/hooks/useTasks";
 import {useSpaces} from "@/hooks/useSpaces";
 import {Colors} from "@/constants/Colors";
 import {Space} from "@/types/space";
+import {DurationUnit} from "@/types/duration";
 
 export default function List() {
     const colors = useTheme();
@@ -39,7 +40,7 @@ export default function List() {
 
             const getMinutes = (duration: string) => {
                 const match = duration.match(/^(\d+)(min|h)$/);
-                if (!match) return 0;
+                if (!match) return Number.MAX_SAFE_INTEGER;
                 const value = parseInt(match[1], 10);
                 return match[2] === 'h' ? value * 60 : value;
             };
@@ -49,7 +50,6 @@ export default function List() {
 
     if (isLoading) return <Text>Loading...</Text>;
     if (isError) return <Text>Fehler beim Laden der Aufgaben</Text>;
-
 
     return (
         <View style={{flex: 1}}>
@@ -85,9 +85,19 @@ export default function List() {
                 data={filteredData}
                 keyExtractor={(item) => item.id}
                 renderItem={({item, index}) => {
-                    const match = item.duration?.match(/^(\d+)(min|h)$/);
+                    const match = item.duration?.match(/^(\d+)(min|h|pcs|m|km|l)$/);
                     const durationValue = match?.[1] || "0";
-                    const durationUnit = match?.[2] === "h" ? "HOURS" : "MINUTES";
+
+                    const durationUnitMap: Record<string, DurationUnit> = {
+                        h: "HOURS",
+                        min: "MINUTES",
+                        pcs: "PIECES",
+                        m: "METERS",
+                        km: "KILOMETERS",
+                        l: "LITERS",
+                    };
+                    const matchedUnit = match?.[2] ?? "min";
+                    const durationUnit: DurationUnit = durationUnitMap[matchedUnit];
 
                     const space = spaces.find((s: Space) => s.id === item.spaceId);
                     if (!space) return null;

@@ -14,10 +14,11 @@ import {useUserData} from "@/hooks/useUserData";
 import {createTask} from "@/services/taskService";
 import {useHabitForm} from "@/hooks/useHabitForm";
 import {useMemo, useState} from "react";
-import {frequencyLabels, frequencyOptions, getDurationLabel} from "@/utils/habitFormUtils";
+import {frequencyLabels, frequencyOptions, getDurationFieldLabel, getDurationLabel} from "@/utils/habitFormUtils";
 import {useSpaces} from "@/hooks/useSpaces";
 import {createSpace} from "@/services/spaceService";
 import CreateSpaceModal from "../Modals/CreateSpaceModal";
+import {DurationUnit} from "@/types/duration";
 
 interface HabitFormScreenProps {
     initialValues?: Partial<NewTask>;
@@ -50,6 +51,10 @@ export default function HabitFormScreen({
     const durationOptions = useMemo(() => [
         {label: getDurationLabel("MINUTES", durationValue), value: "MINUTES"},
         {label: getDurationLabel("HOURS", durationValue), value: "HOURS"},
+        {label: getDurationLabel("PIECES", durationValue), value: "PIECES"},
+        {label: getDurationLabel("METERS", durationValue), value: "METERS"},
+        {label: getDurationLabel("KILOMETERS", durationValue), value: "KILOMETERS"},
+        {label: getDurationLabel("LITERS", durationValue), value: "LITERS"},
     ], [durationValue]);
 
     const handleSave = async () => {
@@ -60,10 +65,19 @@ export default function HabitFormScreen({
 
         setIsSaving(true);
 
+        const unitSuffixMap = {
+            MINUTES: "min",
+            HOURS: "h",
+            PIECES: "pcs",
+            METERS: "m",
+            KILOMETERS: "km",
+            LITERS: "l",
+        };
+
         const habit: NewTask = {
             userId: userData?.id!,
             title,
-            duration: `${durationValue}${durationUnit === "HOURS" ? "h" : "min"}`,
+            duration: `${durationValue}${unitSuffixMap[durationUnit] || ""}`,
             frequency,
             times: frequency !== "NONE" ? parseInt(times) : 1,
             spaceId: space,
@@ -160,7 +174,7 @@ export default function HabitFormScreen({
                         )}
 
                         <View>
-                            <NormalText style={styles.label}>Wie lange?</NormalText>
+                            <NormalText style={styles.label}>{getDurationFieldLabel(durationUnit)}</NormalText>
                             <View style={styles.durationRow}>
                                 <InputField
                                     value={durationValue}
@@ -172,14 +186,15 @@ export default function HabitFormScreen({
                                 <DropdownSelect
                                     value={durationUnit}
                                     data={durationOptions}
-                                    onChange={(item) => setDurationUnit(item.value as "MINUTES" | "HOURS")}
+                                    onChange={(item) => setDurationUnit(item.value as DurationUnit)}
                                     style={styles.unitDropdown}
                                 />
                             </View>
                         </View>
                     </View>
 
-                    <PrimaryButton title={initialValues.title ? "Speichern" : "Erstellen"} onPress={handleSave} disabled={isSaving}/>
+                    <PrimaryButton title={initialValues.title ? "Speichern" : "Erstellen"} onPress={handleSave}
+                                   disabled={isSaving}/>
 
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -254,7 +269,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     unitDropdown: {
-        width: 110,
+        width: 120,
         marginBottom: 14,
     },
     optionButton: {

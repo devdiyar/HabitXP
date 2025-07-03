@@ -12,12 +12,13 @@ import LevelUpModal from '../Modals/LevelUpModal';
 import DeleteModal from "@/components/Modals/DeleteModal";
 import OptionsDropdown from "@/components/OptionsDropdown";
 import {router} from "expo-router";
+import {DurationUnit} from "@/types/duration";
 
 interface CardProps {
     id: string;
     title: string;
     durationValue: string;
-    durationUnit: "MINUTES" | "HOURS"
+    durationUnit: DurationUnit;
     times: number;
     frequency: string;
     done: boolean;
@@ -114,9 +115,16 @@ export default function Card({
                         {/* Badge */}
                         <View style={[styles.timeBadge, {backgroundColor: accentColor}]}>
                             <Text style={styles.duration}>
-                                {durationValue} {durationUnit === "HOURS"
-                                ? (durationValue === "1" ? "Stunde" : "Stunden")
-                                : (durationValue === "1" ? "Minute" : "Minuten")}
+                                {durationValue} {
+                                {
+                                    HOURS: durationValue === "1" ? "Stunde" : "Stunden",
+                                    MINUTES: durationValue === "1" ? "Minute" : "Minuten",
+                                    PIECES: "Stück",
+                                    METERS: "Meter",
+                                    KILOMETERS: "Kilometer",
+                                    LITERS: "Liter",
+                                }[durationUnit]
+                            }
                             </Text>
                         </View>
 
