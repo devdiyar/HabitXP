@@ -50,6 +50,8 @@ public class User {
     private int taskLimit;
 
     private List<String> bonusIds;
+    private List<String> spaceIds;
+
 
     private List<String> avatars;
     private List<String> banner;
