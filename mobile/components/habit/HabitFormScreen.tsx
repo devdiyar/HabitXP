@@ -34,6 +34,8 @@ export default function HabitFormScreen({
     const colors = useTheme();
     const {data: userData} = useUserData();
     const {data: spaces, refetch} = useSpaces();
+    const [isSaving, setIsSaving] = useState(false);
+
     const [isSpaceModalVisible, setIsSpaceModalVisible] = useState(false);
 
     const {
@@ -56,6 +58,8 @@ export default function HabitFormScreen({
             return;
         }
 
+        setIsSaving(true);
+
         const habit: NewTask = {
             userId: userData?.id!,
             title,
@@ -77,6 +81,8 @@ export default function HabitFormScreen({
         } catch (error) {
             console.error("Fehler beim Speichern:", error);
             alert("Fehler beim Speichern des Habits");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -173,7 +179,7 @@ export default function HabitFormScreen({
                         </View>
                     </View>
 
-                    <PrimaryButton title={initialValues.title ? "Speichern" : "Erstellen"} onPress={handleSave}/>
+                    <PrimaryButton title={initialValues.title ? "Speichern" : "Erstellen"} onPress={handleSave} disabled={isSaving}/>
 
                 </ScrollView>
             </KeyboardAvoidingView>
