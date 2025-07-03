@@ -26,35 +26,49 @@ public class SchedulerService {
 
     @Scheduled(cron = "0 0 * * * *") // jede Stunde
     public void checkDeadlineTask() {
-        List<Task> allTasks = taskRepository.findAll();
         LocalDate today = LocalDate.now();
+        List<Task> allTasks = taskRepository.findAll();
+        List<User> users = userRepository.findAll();
 
-        for (Task task : allTasks) {
-            // Wenn Deadline überschritten & nicht abgeschlossen
-            if (task.getDeadline() != null && task.getDeadline().isBefore(today) && !task.isCompleted()) {
-                Space space = spaceRepository.findById(task.getSpaceId()).orElse(null);
-                User user = userService.getUserFromSpace(space).orElse(null);
-                if (!user.isStreakFreezeActive()) {
-                    user.setStreakBroken(true);
-                    user.setStreak(0);
+        for (User user : users) {
+
+            boolean hasCompletedAny = false;
+
+            List<Space> spaces = spaceRepository.findAllById(user.getSpaceIds());
+            for (Space space : spaces) {
+                List<Task> tasks = taskRepository.findAllById(space.getTaskIds());
+
+                for (Task task : tasks) {
+                    if (task.getDeadline() != null && task.getDeadline().isBefore(today)) {
+
+                        if (task.isCompleted()) {
+                            hasCompletedAny = true;
+                        } else {
+                            // Reset oder löschen
+                            if (task.getFrequency() == Frequency.NONE) {
+                                space.getTaskIds().remove(task.getId());
+                                spaceRepository.save(space);
+                                taskRepository.delete(task);
+                            } else {
+                                task.setCompletions(new ArrayList<>());
+                                task.setCompleted(false);
+                                taskRepository.save(task);
+                            }
+                        }
+                    }
                 }
+            }
 
-                if (task.getFrequency() == Frequency.NONE) {
-                    // Task aus Space entfernen
-                    space.getTaskIds().remove(task.getId());
-                    spaceRepository.save(space);
+            if (!hasCompletedAny && !user.isStreakFreezeActive()) {
+                user.setStreakBroken(true);
+                user.setStreak(0);
 
-                    // Task löschen
-                    taskRepository.delete(task);
-                } else {
-                    task.setCompletions(new ArrayList<>());
-                    task.setCompleted(false);
-                }
-
+                user.healthpenalty();
+                user.coinPenalty();
             }
         }
 
-        taskRepository.saveAll(allTasks);
+    userRepository.saveAll(users);
     }
 
 

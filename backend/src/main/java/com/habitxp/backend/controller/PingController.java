@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/keepalive")
+@RequestMapping("/ping")
 public class PingController {
 
     @GetMapping
