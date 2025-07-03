@@ -159,14 +159,22 @@ public class Task {
     }
 
     private int parseDurationToMinutes(String duration) {
-        if (duration.endsWith("h")) {
-            int hours = Integer.parseInt(duration.replace("h", "").trim());
-            return hours * 60;
-        } else if (duration.endsWith("min")) {
-            return Integer.parseInt(duration.replace("min", "").trim());
-        } else {
-            throw new IllegalArgumentException("Invalid duration format: " + duration);
+        try {
+            if (duration.endsWith("h")) {
+                String numeric = duration.replace("h", "").trim().replace(",", ".");
+                double hours = Double.parseDouble(numeric);
+                return (int) (hours * 60);
+            } else if (duration.endsWith("min")) {
+                String numeric = duration.replace("min", "").trim().replace(",", ".");
+                double minutes = Double.parseDouble(numeric);
+                return (int) minutes;
+            } else {
+                throw new IllegalArgumentException("Invalid duration format: " + duration);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number in duration: " + duration, e);
         }
     }
+
 
 } 
