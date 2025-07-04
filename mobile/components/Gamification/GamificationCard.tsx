@@ -7,6 +7,7 @@ import StatIndicator from "@/components/Gamification/StatIndicator";
 import RewardModal from "@/components/Modals/RewardModal";
 import {useRemainingTime} from "@/hooks/useRemainingTime";
 import {useTasks} from "@/hooks/useTasks";
+import { useUserData } from '@/hooks/useUserData';
 
 const STREAK_MILESTONES = [5, 10, 25, 50, 100];
 
@@ -15,13 +16,17 @@ const GAMIFICATION_ICONS = {
     coin: require("@/assets/images/icons/gamification/coin.png")
 };
 
-interface GamificationCardProps {
+/*interface GamificationCardProps {
     userData: UserData;
-}
+}*/
 
-const GamificationCard: React.FC<GamificationCardProps> = ({
-                                                               userData
-                                                           }) => {
+const GamificationCard: React.FC = ({}) => {
+                        
+    const { data: userData, isLoading, isError } = useUserData();
+    const {data: habits = []} = useTasks();
+
+    if (!userData || isLoading || isError) return null;
+
     const {
         health,
         maxHealth,
@@ -37,7 +42,6 @@ const GamificationCard: React.FC<GamificationCardProps> = ({
         taskLimit
     } = userData;
 
-    const {data: habits = [], isLoading, isError} = useTasks();
     const avatar = (avatars && avatars.length > 0) ? avatars[0] : 'diamond';
     const [showStreakModal, setShowStreakModal] = useState(false);
     const [alreadyShown, setAlreadyShown] = useState(false);
