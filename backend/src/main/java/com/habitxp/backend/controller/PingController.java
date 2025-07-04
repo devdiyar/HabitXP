@@ -1,4 +1,4 @@
-package com.yourapp.api;
+package com.habitxp.backend.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
