@@ -53,18 +53,6 @@ export default function Card({
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const {data: userData} = useUserData();
-
-    const handleLevelUpChoice = async (choice: "HEALTH" | "TASK_LIMIT") => {
-        try {
-            if (!userData?.id) return;
-            await selectLevelUpBonus(userData.id, choice);
-            setShowLevelUpModal(false);
-            await queryClient.invalidateQueries({queryKey: ['userData']});
-        } catch (error) {
-            console.error("Fehler beim Anwenden der Belohnung:", error);
-        }
-    };
-
     const [rewards, setRewards] = useState<RewardItem[]>([]);
 
     const colorSet = Colors.habit[spaceColorKey];
@@ -77,21 +65,35 @@ export default function Card({
         try {
             const response = await completeTask(id);
             const effectiveXP = userData?.xpBonusActive ? response.rewardXP * userData.xpFactor : response.rewardXP;
-            if (response.success) {
-                if (response.levelup) {
-                    setShouldShowLevelUp(true);
-                }
 
+            if (response.success) {
                 await queryClient.invalidateQueries({queryKey: ['tasks']});
                 await queryClient.invalidateQueries({queryKey: ['userData']});
-                setRewards([
-                    {label: "XP", value: effectiveXP},
-                    {label: "Coins", value: response.rewardCoins},
-                ]);
-                setShowModal(true);
+
+                if (response.completed) {
+                    setRewards([
+                        {label: "XP", value: effectiveXP},
+                        {label: "Coins", value: response.rewardCoins},
+                    ]);
+                    setShowModal(true);
+
+                    if (response.levelup) {
+                        setShouldShowLevelUp(true);
+                    }
             }
         } catch (error) {
             console.error("Fehler beim Abschließen des Tasks:", error);
+        }
+    };
+
+    const handleLevelUpChoice = async (choice: "HEALTH" | "TASK_LIMIT") => {
+        try {
+            if (!userData?.id) return;
+            await selectLevelUpBonus(userData.id, choice);
+            setShowLevelUpModal(false);
+            await queryClient.invalidateQueries({queryKey: ['userData']});
+        } catch (error) {
+            console.error("Fehler beim Anwenden der Belohnung:", error);
         }
     };
 

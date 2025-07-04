@@ -14,8 +14,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Data
@@ -59,21 +61,13 @@ public class Task {
         int durationMinutes = parseDurationToMinutes(this.duration);
 
         // Cleanup old completions after 90 Days
-        completions = completions.stream()
-                .filter(c -> c.getTimestamp().isAfter(now.minusDays(90)))
-                .collect(Collectors.toList());
+        cleanOldCompletions(now);
 
         // Check Time since last completion
-        Completion lastCompletion = completions.stream()
-                .filter(c -> c.getUserId().equals(user.getId()))
-                .reduce((first, second) -> second) // get latest completion
-                .orElse(null);
+        Completion lastCompletion = getLastCompletionForUser(user.getId());
 
-        if (lastCompletion != null) {
-            LocalDateTime earliestNext = lastCompletion.getTimestamp().plusMinutes(durationMinutes);
-            if (now.isBefore(earliestNext)) {
-                return false; // Too soon
-            }
+        if (lastCompletion != null && isCooldownStillActive(lastCompletion, now, durationMinutes)) {
+            return false;
         }
 
         // Add new Completion
@@ -140,6 +134,40 @@ public class Task {
         }
     }
 
+    /* ### HILFSMETHODEN ### */
+
+    private static final Pattern TIME_UNIT_PATTERN = Pattern.compile("^\\d+(min|h)$");
+    private static final Pattern NON_TIME_UNIT_PATTERN = Pattern.compile("^\\d+(pcs|m|km|l)$");
+
+    private boolean isNonTimeBasedDuration(String duration) {
+        return NON_TIME_UNIT_PATTERN.matcher(duration.toLowerCase()).matches();
+    }
+
+    private void cleanOldCompletions(LocalDateTime now) {
+        completions = completions.stream()
+                .filter(c -> c.getTimestamp().isAfter(now.minusDays(90)))
+                .collect(Collectors.toList());
+    }
+
+    private Completion getLastCompletionForUser(String userId) {
+        return completions.stream()
+                .filter(c -> c.getUserId().equals(userId))
+                .max(Comparator.comparing(Completion::getTimestamp))
+                .orElse(null);
+    }
+
+    private boolean isCooldownStillActive(Completion last, LocalDateTime now, int durationMinutes) {
+        if (isNonTimeBasedDuration(this.duration)) {
+            if (frequency == Frequency.DAILY) {
+                return now.isBefore(last.getTimestamp().plusMinutes(1));
+            } else {
+                return last.getTimestamp().toLocalDate().isEqual(now.toLocalDate());
+            }
+        } else {
+            return now.isBefore(last.getTimestamp().plusMinutes(durationMinutes));
+        }
+    }
+
     private boolean isInCurrentPeriod(LocalDate date) {
         LocalDate now = LocalDate.now();
 
@@ -159,22 +187,25 @@ public class Task {
     }
 
     private int parseDurationToMinutes(String duration) {
+        String d = duration.trim().toLowerCase();
+
         try {
-            if (duration.endsWith("h")) {
+            if (d.endsWith("h")) {
                 String numeric = duration.replace("h", "").trim().replace(",", ".");
                 double hours = Double.parseDouble(numeric);
                 return (int) (hours * 60);
-            } else if (duration.endsWith("min")) {
+            } else if (d.endsWith("min")) {
                 String numeric = duration.replace("min", "").trim().replace(",", ".");
                 double minutes = Double.parseDouble(numeric);
                 return (int) minutes;
-            } else {
-                throw new IllegalArgumentException("Invalid duration format: " + duration);
+            } else if (isNonTimeBasedDuration(d)) {
+                return 1;
             }
+
+            throw new IllegalArgumentException("Invalid duration format: " + duration);
+
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid number in duration: " + duration, e);
         }
     }
-
-
 } 
