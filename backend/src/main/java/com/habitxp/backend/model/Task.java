@@ -137,10 +137,11 @@ public class Task {
     /* ### HILFSMETHODEN ### */
 
     private static final Pattern TIME_UNIT_PATTERN = Pattern.compile("^\\d+(min|h)$");
-    private static final Pattern NON_TIME_UNIT_PATTERN = Pattern.compile("^\\d+(pcs|m|km|l)$");
+    private static final Pattern NON_TIME_UNIT_PATTERN = Pattern.compile("^\\d+[.,]?\\d*(pcs|m|km|l)$");
 
     private boolean isNonTimeBasedDuration(String duration) {
-        return NON_TIME_UNIT_PATTERN.matcher(duration.toLowerCase()).matches();
+        String normalized = duration.trim().toLowerCase().replace(",", ".");
+        return NON_TIME_UNIT_PATTERN.matcher(normalized).matches();
     }
 
     private void cleanOldCompletions(LocalDateTime now) {
@@ -187,15 +188,15 @@ public class Task {
     }
 
     private int parseDurationToMinutes(String duration) {
-        String d = duration.trim().toLowerCase();
+        String d = duration.trim().toLowerCase().replace(",", ".");
 
         try {
             if (d.endsWith("h")) {
-                String numeric = duration.replace("h", "").trim().replace(",", ".");
+                String numeric = d.replace("h", "").trim();
                 double hours = Double.parseDouble(numeric);
                 return (int) (hours * 60);
             } else if (d.endsWith("min")) {
-                String numeric = duration.replace("min", "").trim().replace(",", ".");
+                String numeric = d.replace("min", "").trim();
                 double minutes = Double.parseDouble(numeric);
                 return (int) minutes;
             } else if (isNonTimeBasedDuration(d)) {

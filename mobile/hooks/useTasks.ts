@@ -12,18 +12,13 @@ export function useTasks() {
         queryFn: async () => {
             const data = await getTasks();
 
-            data.forEach(task => {
-                console.log("Task:", task.title);
-                console.log("Completions:", task.completions);
-            });
-            
             return data.map(task => {
                 const completionsInPeriod = filterCompletionsByFrequency(task.completions, task.frequency);
-
+                
                 return {
                     ...task,
                     completionsCount: completionsInPeriod.length,
-                    isCompleted: task.completed
+                    isCompleted: task.completed,
                 };
             });
         },

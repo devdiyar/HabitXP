@@ -85,7 +85,7 @@ export default function List() {
                 data={filteredData}
                 keyExtractor={(item) => item.id}
                 renderItem={({item, index}) => {
-                    const match = item.duration?.match(/^(\d+)(min|h|pcs|m|km|l)$/);
+                    const match = item.duration?.match(/^([\d.,]+)(min|h|pcs|m|km|l)$/);
                     const durationValue = match?.[1] || "0";
 
                     const durationUnitMap: Record<string, DurationUnit> = {

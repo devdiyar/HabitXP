@@ -60,6 +60,19 @@ export default function Card({
     const backgroundColor = done ? colorSet.completed : colorSet.bg;
     const accentColor = done ? colorSet.completedAccent : colorSet.ac;
 
+    const formatDuration = (value: string, unit: DurationUnit) => {
+        const formatted = value.replace(".", ",");
+        const unitLabel = {
+            HOURS: value === "1" ? "Stunde" : "Stunden",
+            MINUTES: value === "1" ? "Minute" : "Minuten",
+            PIECES: "Stück",
+            METERS: "Meter",
+            KILOMETERS: "Kilometer",
+            LITERS: "Liter",
+        }[unit];
+        return `${formatted} ${unitLabel}`;
+    };
+
     const handleComplete = async () => {
         if (done) return;
 
@@ -127,16 +140,7 @@ export default function Card({
                         {/* Badge */}
                         <View style={[styles.timeBadge, {backgroundColor: accentColor}]}>
                             <Text style={styles.duration}>
-                                {durationValue} {
-                                {
-                                    HOURS: durationValue === "1" ? "Stunde" : "Stunden",
-                                    MINUTES: durationValue === "1" ? "Minute" : "Minuten",
-                                    PIECES: "Stück",
-                                    METERS: "Meter",
-                                    KILOMETERS: "Kilometer",
-                                    LITERS: "Liter",
-                                }[durationUnit]
-                            }
+                                {formatDuration(durationValue, durationUnit)}
                             </Text>
                         </View>
 
