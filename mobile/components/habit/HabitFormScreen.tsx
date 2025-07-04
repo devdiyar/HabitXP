@@ -1,4 +1,4 @@
-import {KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
+import {Keyboard, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
 import Container from "@/components/Container";
 import Title from "@/components/Title";
 import {Ionicons} from "@expo/vector-icons";
@@ -19,6 +19,7 @@ import {useSpaces} from "@/hooks/useSpaces";
 import {createSpace} from "@/services/spaceService";
 import CreateSpaceModal from "../Modals/CreateSpaceModal";
 import {DurationUnit} from "@/types/duration";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 interface HabitFormScreenProps {
     initialValues?: Partial<NewTask>;
@@ -101,16 +102,15 @@ export default function HabitFormScreen({
     };
 
     return (
-        <Container>
-            <KeyboardAvoidingView
-                style={{flex: 1}}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                keyboardVerticalOffset={100}
-            >
-                <ScrollView
-                    contentContainerStyle={styles.scroll}
-                    keyboardShouldPersistTaps="handled"
-                >
+        <KeyboardAwareScrollView
+            style={{backgroundColor: colors.background}}
+            contentContainerStyle={{flexGrow: 1}}
+            enableOnAndroid={true}
+            keyboardShouldPersistTaps={"handled"}
+            extraScrollHeight={20}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <Container style={styles.container}>
                     <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                         <Ionicons name={"arrow-back"} size={30} color={colors.title}/>
                     </TouchableOpacity>
@@ -196,25 +196,27 @@ export default function HabitFormScreen({
                     <PrimaryButton title={initialValues.title ? "Speichern" : "Erstellen"} onPress={handleSave}
                                    disabled={isSaving}/>
 
-                </ScrollView>
-            </KeyboardAvoidingView>
-            <CreateSpaceModal
-                isVisible={isSpaceModalVisible}
-                onClose={() => setIsSpaceModalVisible(false)}
-                existingSpaces={spaces || []}
-                onDone={async (name, colorKey) => {
-                    const newSpace = await createSpace({name, colorKey, userId: userData?.id!});
-                    await refetch();
-                    setSpace(newSpace.id);
-                }}
-            />
-
-        </Container>
-
+                    <CreateSpaceModal
+                        isVisible={isSpaceModalVisible}
+                        onClose={() => setIsSpaceModalVisible(false)}
+                        existingSpaces={spaces || []}
+                        onDone={async (name, colorKey) => {
+                            const newSpace = await createSpace({name, colorKey, userId: userData?.id!});
+                            await refetch();
+                            setSpace(newSpace.id);
+                        }}
+                    />
+                </Container>
+            </TouchableWithoutFeedback>
+        </KeyboardAwareScrollView>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        justifyContent: "center",
+        padding: 20,
+    },
     backButton: {
         zIndex: 10,
     },
