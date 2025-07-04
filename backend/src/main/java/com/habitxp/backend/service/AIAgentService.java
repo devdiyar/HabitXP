@@ -28,12 +28,18 @@ public class AIAgentService {
     private String apiKey;
 
     public int calculateXP(Task task) {
+        if(isLikelyNonsense(task.getTitle())){
+            return 0;
+        }
         Space space = spaceRepository.findById(task.getSpaceId()).orElse(null);
         String prompt = buildPromptForXP(task, space);
         return askOpenAI(prompt);
     }
 
     public int calculateCoins(Task task) {
+        if(isLikelyNonsense(task.getTitle())){
+            return 0;
+        }
         Space space = spaceRepository.findById(task.getSpaceId()).orElse(null);
         String prompt = buildPromptForCoins(task, space);
         return askOpenAI(prompt);
@@ -70,7 +76,7 @@ public class AIAgentService {
         } catch (HttpClientErrorException exception) {
             if (exception.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS) {
                 logger.warn("OpenAI quota exceeded, assigning default XP/Coins");
-                return 10;
+                return 0;
             }
             throw exception;
         }
@@ -158,6 +164,31 @@ public class AIAgentService {
                 spaceName
         );
     }
+
+        private boolean isLikelyNonsense(String title) {
+        if (title == null || title.trim().isEmpty()) return true;
+
+        String cleaned = title.replaceAll("[^a-zA-Z]", "").toLowerCase();
+
+        // Sehr kurze Einträge direkt ablehnen
+        if (cleaned.length() < 4) return true;
+
+        // Nur 1 „Wort“ ist okay, wenn es ein echtes sein könnte
+        if (cleaned.length() >= 8 && countVowels(cleaned) >= 2) return false;
+
+        // Wenn kaum Vokale → vermutlich zufällig
+        double vowelRatio = (double) countVowels(cleaned) / cleaned.length();
+        if (vowelRatio < 0.25) return true;
+
+        return false;
+    }
+
+    private int countVowels(String input) {
+        return (int) input.chars()
+                .filter(c -> "aeiou".indexOf(c) >= 0)
+                .count();
+    }
+    
 
     /*private String buildPrompt(Task task, String type) {
         return String.format("""
