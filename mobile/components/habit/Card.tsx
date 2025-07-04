@@ -77,7 +77,7 @@ export default function Card({
         try {
             const response = await completeTask(id);
             const effectiveXP = userData?.xpBonusActive ? response.rewardXP * userData.xpFactor : response.rewardXP;
-            if (response.completed) {
+            if (response.success) {
                 if (response.levelup) {
                     setShouldShowLevelUp(true);
                 }
