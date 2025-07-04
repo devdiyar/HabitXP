@@ -13,6 +13,7 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import OptionsDropdown from "@/components/OptionsDropdown";
 import {router} from "expo-router";
 import {DurationUnit} from "@/types/duration";
+import Toast from 'react-native-toast-message';
 
 interface CardProps {
     id: string;
@@ -80,6 +81,15 @@ export default function Card({
                     if (response.levelup) {
                         setShouldShowLevelUp(true);
                     }
+                } else {
+                    Toast.show({
+                        type: 'info',
+                        text1: "Fortschritt gespeichert",
+                        text2: `${completionsCount + 1}/${times} abgeschlossen`,
+                        position: 'top',
+                        visibilityTime: 2500,
+                    });
+                }
             }
         } catch (error) {
             console.error("Fehler beim Abschließen des Tasks:", error);
