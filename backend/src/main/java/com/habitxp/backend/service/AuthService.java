@@ -46,7 +46,7 @@ public class AuthService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .xp(0)
-                .xpGoal(100)
+                .xpGoal(20)
                 .coins(0)
                 .level(0)
                 .health(20)

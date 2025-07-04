@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
@@ -55,7 +55,7 @@ public class User {
     private List<String> spaceIds = new ArrayList<>();
     @Builder.Default
     private List<String> bonusIds = new ArrayList<>();
-    
+
     @Builder.Default
     private List<String> avatars = new ArrayList<>();
     @Builder.Default
@@ -73,8 +73,8 @@ public class User {
     public int calculateLevel() {
         int tempLevel = 0;
         double xpSum = 0;
-        while (xp >= xpSum + Math.round(100 * Math.pow(1.2, tempLevel))) {
-            xpSum += Math.round(100 * Math.pow(1.2, tempLevel));
+        while (xp >= xpSum + Math.round(20 * Math.pow(1.2, tempLevel))) {
+            xpSum += Math.round(20 * Math.pow(1.2, tempLevel));
             tempLevel++;
         }
         this.level = tempLevel;
@@ -84,13 +84,13 @@ public class User {
     public int calculateCurrentXP() {
         double xpSum = 0;
         for (int i = 0; i < level; i++) {
-            xpSum += Math.round(100 * Math.pow(1.2, i));
+            xpSum += Math.round(20 * Math.pow(1.2, i));
         }
         return this.currentXP = (int) (xp - xpSum);
     }
 
     public int calculateXPGoal() {
-        this.xpGoal = (int) Math.round(100 * Math.pow(1.2, level));
+        this.xpGoal = (int) Math.round(20 * Math.pow(1.2, level));
         return xpGoal;
     }
 
@@ -100,7 +100,7 @@ public class User {
             xpFactorUntil = null;
             xpBonusActive = false;
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -110,7 +110,7 @@ public class User {
             StreakFreezeActive = false;
             StreakFreezeUntil = null;
             return true;
-        }else{
+        } else {
             return false;
         }
     }
