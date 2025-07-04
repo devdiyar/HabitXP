@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {UserData} from "@/types/user";
 import {Ionicons} from "@expo/vector-icons";
 import ProgressBar from "@/components/Gamification/ProgressBar";
 import StatIndicator from "@/components/Gamification/StatIndicator";
 import RewardModal from "@/components/Modals/RewardModal";
 import {useRemainingTime} from "@/hooks/useRemainingTime";
 import {useTasks} from "@/hooks/useTasks";
-import { useUserData } from '@/hooks/useUserData';
+import {useUserData} from '@/hooks/useUserData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STREAK_MILESTONES = [5, 10, 25, 50, 100];
 
@@ -16,14 +16,15 @@ const GAMIFICATION_ICONS = {
     coin: require("@/assets/images/icons/gamification/coin.png")
 };
 
-/*interface GamificationCardProps {
-    userData: UserData;
-}*/
+interface GamificationCardProps {
+    allowStreakModal?: boolean;
+}
 
-const GamificationCard: React.FC = ({}) => {
-                        
-    const { data: userData, isLoading, isError } = useUserData();
+const GamificationCard: React.FC<GamificationCardProps> = ({allowStreakModal = true}) => {
+
+    const {data: userData, isLoading, isError} = useUserData();
     const {data: habits = []} = useTasks();
+    const [showStreakModal, setShowStreakModal] = useState(false);
 
     if (!userData || isLoading || isError) return null;
 
@@ -43,16 +44,24 @@ const GamificationCard: React.FC = ({}) => {
     } = userData;
 
     const avatar = (avatars && avatars.length > 0) ? avatars[0] : 'diamond';
-    const [showStreakModal, setShowStreakModal] = useState(false);
-    const [alreadyShown, setAlreadyShown] = useState(false);
     const remainingTime = useRemainingTime(xpFactorUntil);
 
     useEffect(() => {
-        if (STREAK_MILESTONES.includes(streak) && !alreadyShown) {
-            setShowStreakModal(true);
-            setAlreadyShown(true);
-        }
-    }, [streak, alreadyShown]);
+        const checkAndShowStreakModal = async () => {
+            if (!allowStreakModal) return;
+
+            if (STREAK_MILESTONES.includes(streak)) {
+                const key = `streak_shown_${streak}`;
+                const wasShown = await AsyncStorage.getItem(key);
+                if (!wasShown) {
+                    setShowStreakModal(true);
+                    await AsyncStorage.setItem(key, "true");
+                }
+            }
+        };
+
+        checkAndShowStreakModal().catch(console.error);
+    }, [streak, allowStreakModal]);
 
     return (
         <>

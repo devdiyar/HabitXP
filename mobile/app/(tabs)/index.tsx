@@ -20,7 +20,7 @@ export default function HomeScreen() {
 
     return (
         <Container>
-            <GamificationCard/>
+            <GamificationCard allowStreakModal/>
             <List/>
         </Container>
     );

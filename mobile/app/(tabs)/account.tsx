@@ -15,7 +15,7 @@ export default function AccountScreen() {
         <Container>
             {isLoading && <Text>Loading...</Text>}
             {isError && <Text>Fehler beim Laden der Daten</Text>}
-            {userData && <GamificationCard/>}
+            {userData && <GamificationCard allowStreakModal={false}/>}
 
             <Pressable style={styles.buttonContainer} onPress={() => router.push('/settings')}>
                 <Ionicons name="settings-outline" size={24} color="white"/>
