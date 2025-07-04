@@ -105,19 +105,22 @@ public class TaskService {
         boolean success = task.markAsCompleted(user);
         taskRepository.save(task);
 
+        boolean completed = task.isPeriodCompleted();
         int level = user.getLevel();
         boolean levelup = false;
-        if (success) {
+
+        if (success && completed) {
             applyRewardsToUser(user, task);
-        }
-        user = getUserById(userId);
-        if (user.getLevel() > level) {
-            levelup = true;
+
+            user = getUserById(userId);
+            if (user.getLevel() > level) {
+                levelup = true;
+            }
         }
 
         return new CompletionResponse(
                 success,
-                task.isCompleted(),
+                completed,
                 levelup,
                 task.remainingCompletions(),
                 task.getRewardXP(),
