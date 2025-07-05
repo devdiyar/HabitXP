@@ -68,10 +68,13 @@ const GamificationCard: React.FC<GamificationCardProps> = ({allowStreakModal = t
             <View style={styles.container}>
                 <View style={styles.row}>
                     {/* Avatar */}
-                    <View style={styles.avatarBox}>
-                        <Image source={GAMIFICATION_ICONS[avatar as keyof typeof GAMIFICATION_ICONS]}
-                               style={styles.diamond}/>
+                    <View style={styles.avatarContainer}>
+                        <View style={styles.avatarBox}>
+                            <Image source={GAMIFICATION_ICONS[avatar as keyof typeof GAMIFICATION_ICONS]} style={styles.diamond} />
+                        </View>
+                        <Text style={styles.nameText}>{userData.username}</Text>
                     </View>
+
 
                     {/* Bars & Stats */}
                     <View style={styles.barsBox}>
@@ -151,12 +154,26 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingBottom: 12,
     },
-    avatarBox: {
-        backgroundColor: '#221a3f',
-        padding: 30,
+    avatarContainer: {
         alignItems: 'center',
         marginRight: 15,
     },
+
+    avatarBox: {
+        backgroundColor: '#221a3f',
+        padding: 20,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    nameText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '600',
+        marginTop: 8,
+    },
+
     diamond: {
         width: 60,
         height: 60,
