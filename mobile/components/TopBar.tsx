@@ -22,17 +22,14 @@ const TopBar = ({ onPressAdd, tab }: TopBarProps) => {
         onPress={handlePress}
         activeOpacity={0.7}
       >
-        {
-          tab === "space" ? (
-            <Ionicons name="add" size={32} color="white" />
-          ) : (
-            <Image
-              source={require('@/assets/images/icons/home/menu.png')}
-              style={{ width: 18, height:18 , marginTop: 5}}
-
-            />
-          )
-        }
+        {tab === 'space' ? (
+          <Ionicons name="add" size={32} color="white" />
+        ) : (
+          <Image
+            source={require('@/assets/images/icons/home/menu.png')}
+            style={{ width: 18, height: 18, marginTop: 5 }}
+          />
+        )}
       </TouchableOpacity>
     </View>
   );

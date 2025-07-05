@@ -1,14 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
 
 const add = () => {
   return (
     <View>
       <Text>add</Text>
     </View>
-  )
-}
+  );
+};
 
-export default add
+export default add;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

@@ -1,12 +1,12 @@
-import {Colors} from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
 export type NewSpace = {
-    userId: string;
-    name: string;
-    colorKey: keyof typeof Colors.habit;
-}
+  userId: string;
+  name: string;
+  colorKey: keyof typeof Colors.habit;
+};
 
 export type Space = NewSpace & {
-    id: string;
-    taskIds: string[];
-}
+  id: string;
+  taskIds: string[];
+};

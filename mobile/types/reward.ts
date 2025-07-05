@@ -1,4 +1,4 @@
 export interface RewardItem {
-    label: string;
-    value: number | string;
+  label: string;
+  value: number | string;
 }

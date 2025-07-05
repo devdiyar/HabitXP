@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
@@ -25,12 +31,18 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={[styles.header, { color: theme.title }]}>Einstellungen</Text>
+        <Text style={[styles.header, { color: theme.title }]}>
+          Einstellungen
+        </Text>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.subtitle }]}>Konto</Text>
+          <Text style={[styles.sectionTitle, { color: theme.subtitle }]}>
+            Konto
+          </Text>
           <SettingItem icon="person-outline" label="Profil bearbeiten" />
           <SettingItem icon="lock-closed-outline" label="Passwort ändern" />
           <SettingItem
@@ -40,7 +52,10 @@ export default function SettingsScreen() {
           />
         </View>
 
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Ionicons name="arrow-back-outline" size={24} color={theme.title} />
           <Text style={[styles.backText, { color: theme.title }]}>Zurück</Text>
         </TouchableOpacity>
@@ -69,7 +84,12 @@ function SettingItem({
   const theme = Colors.dark;
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
-      <Ionicons name={icon} size={22} color={theme.title} style={{ marginRight: 12 }} />
+      <Ionicons
+        name={icon}
+        size={22}
+        color={theme.title}
+        style={{ marginRight: 12 }}
+      />
       <Text style={[styles.itemText, { color: theme.title }]}>{label}</Text>
     </TouchableOpacity>
   );

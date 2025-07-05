@@ -1,59 +1,69 @@
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {Colors} from "@/constants/Colors";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Colors } from '@/constants/Colors';
 
-interface PurchaseSuccessfulModalProps{
-    visible: boolean;
-    onClose: () => void;
+interface PurchaseSuccessfulModalProps {
+  visible: boolean;
+  onClose: () => void;
 }
-export default function PurchaseSuccessfulModal ({visible, onClose}: Readonly<PurchaseSuccessfulModalProps>){
-    const theme = Colors["dark"];
+export default function PurchaseSuccessfulModal({
+  visible,
+  onClose,
+}: Readonly<PurchaseSuccessfulModalProps>) {
+  const theme = Colors['dark'];
 
-    return (
-        <Modal transparent={true} animationType="fade" visible={visible}>
-            <View style={styles.modalBackground}>
-                <View style={[styles.modalContent, {backgroundColor: theme.background}]}>
-                    <Text style={[styles.modalTitle, {color: theme.title}]}>Bonus erfolgreich gekauft</Text>
-                    <TouchableOpacity style={[styles.closeButton, {backgroundColor: theme.primary}]} onPress={onClose}>
-                        <Text style={styles.closeButtonText}>Schließen</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </Modal>
-    );
+  return (
+    <Modal transparent={true} animationType="fade" visible={visible}>
+      <View style={styles.modalBackground}>
+        <View
+          style={[styles.modalContent, { backgroundColor: theme.background }]}
+        >
+          <Text style={[styles.modalTitle, { color: theme.title }]}>
+            Bonus erfolgreich gekauft
+          </Text>
+          <TouchableOpacity
+            style={[styles.closeButton, { backgroundColor: theme.primary }]}
+            onPress={onClose}
+          >
+            <Text style={styles.closeButtonText}>Schließen</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
 }
 
 const styles = StyleSheet.create({
-    modalBackground: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContent: {
-        padding: 24,
-        borderRadius: 12,
-        alignItems: 'center',
-        width: '80%',
-    },
-    modalTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    modalText: {
-        fontSize: 18,
-        marginBottom: 12,
-        textAlign: "center",
-    },
-    closeButton: {
-        marginTop: 20,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-    },
-    closeButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    padding: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  closeButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
