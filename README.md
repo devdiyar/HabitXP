@@ -1,4 +1,5 @@
 Dieses Readme ist Teil der App **"HabitXP"**, einer Habit-Tracking-Anwendung mit Gaming Mechanismen.
+<img width="1716" height="1200" alt="Thumbnail" src="https://github.com/user-attachments/assets/617d236d-2d93-4486-944d-d9940f479c5a" />
 
 ## Team
 
