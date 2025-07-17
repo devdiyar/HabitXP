@@ -6,7 +6,7 @@ Dieses Readme ist Teil der App **"HabitXP"**, einer Habit-Tracking-Anwendung mit
 Members:
 [Dustin](https://www.github.com/),
 [Yassine](https://www.github.com/),
-[Diyar](https://www.github.com/diyardev001),
+[Diyar](https://github.com/devdiyar),
 [Kathrin](https://www.github.com/kathrinple)
 
 ## Quickstart
